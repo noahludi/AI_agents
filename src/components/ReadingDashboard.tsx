@@ -52,29 +52,33 @@ export function ReadingDashboard() {
     refresh();
   }, []);
 
-  const topGenres = useMemo(() =>
-    stats
-      ? Object.entries(stats.genres)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 3)
-          .map(([name, value]) => `${name} (${value})`)
-      : [],
-  [stats]);
+  const topGenres = useMemo(
+    () =>
+      stats
+        ? Object.entries(stats.genres)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([name, value]) => `${name} (${value})`)
+        : [],
+    [stats],
+  );
 
-  const topAuthors = useMemo(() =>
-    stats
-      ? Object.entries(stats.authors)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 3)
-          .map(([name, value]) => `${name} (${value})`)
-      : [],
-  [stats]);
+  const topAuthors = useMemo(
+    () =>
+      stats
+        ? Object.entries(stats.authors)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([name, value]) => `${name} (${value})`)
+        : [],
+    [stats],
+  );
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="rounded-3xl border border-slate-200 bg-white/90 p-4 shadow-sm backdrop-blur">
       <header className="flex items-center justify-between gap-2">
-        <div>
-          <p className="text-sm font-semibold text-indigo-600">Tu biblioteca</p>
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">Tu biblioteca</p>
           <h2 className="text-xl font-bold text-slate-900">Lista, historial y estadísticas</h2>
           <p className="text-sm text-slate-600">
             Todos los datos se guardan en SQLite en el backend. Puedes agregar libros con el chat o usando las tools.
@@ -98,14 +102,19 @@ export function ReadingDashboard() {
       </section>
 
       <section className="mt-6 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-          <h3 className="text-lg font-semibold text-slate-900">Lista de lectura</h3>
-          <p className="text-xs text-slate-500">Prioridades, notas y estado guardados en base de datos.</p>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-inner">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-900">Lista de lectura</h3>
+              <p className="text-xs text-slate-500">Prioridades, notas y estado guardados en base de datos.</p>
+            </div>
+            {loading && <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-800">Cargando…</span>}
+          </div>
 
           <div className="mt-3 space-y-3">
             {list.length === 0 && <p className="text-sm text-slate-600">Aún no has agregado libros.</p>}
             {list.map((item) => (
-              <article key={`${item.bookId}-${item.addedAt}`} className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+              <article key={`${item.bookId}-${item.addedAt}`} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
                     <p className="text-sm font-semibold text-slate-900">{item.title || 'Título no disponible'}</p>
@@ -113,19 +122,23 @@ export function ReadingDashboard() {
                     <p className="text-xs text-slate-500">Guardado: {new Date(item.addedAt).toLocaleDateString()}</p>
                     {item.notes && <p className="text-xs text-slate-600">Notas: {item.notes}</p>}
                   </div>
-                  <span className="rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
-                    {priorityLabel[item.priority] || 'Media'}
-                  </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className="rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
+                      {priorityLabel[item.priority] || 'Media'}
+                    </span>
+                    {item.status === 'read' && item.rating && (
+                      <span className="rounded-full bg-amber-100 px-3 py-1 text-[11px] font-semibold text-amber-800">
+                        {item.rating}/5 ⭐
+                      </span>
+                    )}
+                  </div>
                 </div>
-                {item.status === 'read' && item.rating && (
-                  <p className="mt-2 text-xs text-amber-700">Valoración: {item.rating}/5</p>
-                )}
               </article>
             ))}
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 shadow-inner">
           <h3 className="text-lg font-semibold text-slate-900">Patrones de lectura</h3>
           <div className="mt-3 space-y-2 text-sm text-slate-700">
             <p>
