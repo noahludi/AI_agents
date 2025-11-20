@@ -13,8 +13,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className="min-h-screen">
-        <main className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-10">
+      <body className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50">
+        <main className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10">
           <header className="rounded-3xl border border-indigo-100 bg-white/70 p-6 shadow-sm backdrop-blur">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-2">
