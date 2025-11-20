@@ -39,10 +39,7 @@ export function ChatPanel() {
         <div className="space-y-1">
           <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">Chat</p>
           <h2 className="text-xl font-bold text-slate-900">Recomendaciones en tiempo real</h2>
-          <p className="text-sm text-slate-600">
-            IA con streaming + tool calling. Las herramientas viven en el backend y usan Google Books, base de datos y
-            sanitización de entradas.
-          </p>
+          <p className="text-sm text-slate-600">Comparte lo que quieres leer y el asistente buscará opciones.</p>
         </div>
         <div className="flex flex-col items-end gap-2 text-xs text-slate-600">
           <span className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-800">/api/chat</span>
@@ -94,8 +91,8 @@ export function ChatPanel() {
             required
             maxLength={800}
           />
-          <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-            <span>Se limpia y valida antes de enviar al backend</span>
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+            <span>Las peticiones se gestionan directamente en el backend</span>
             <div className="flex items-center gap-2">
               {isLoading && (
                 <button
