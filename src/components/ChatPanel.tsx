@@ -11,8 +11,9 @@ const roleLabel: Record<string, string> = {
 };
 
 export function ChatPanel() {
-  const { messages, handleSubmit, handleInputChange, input, isLoading, stop } = useChat({ api: '/api/chat' });
+  const { messages, handleSubmit, handleInputChange, input, isLoading, stop, setInput } = useChat({ api: '/api/chat' });
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -31,6 +32,24 @@ export function ChatPanel() {
     event.preventDefault();
     if (!input.trim()) return;
     handleSubmit(event);
+  };
+
+  const quickPrompts = [
+    {
+      label: 'Añadir libro (tool)',
+      prompt: 'Agrega “Project Hail Mary” con prioridad alta y nota: revisar en grupo de lectura',
+    },
+    {
+      label: 'Buscar y resumir',
+      prompt: 'Busca en Google Books novelas de misterio y añade las dos mejores al dashboard de lectura',
+    },
+  ];
+
+  const roleBorders: Record<string, string> = {
+    user: 'border-slate-900',
+    assistant: 'border-indigo-200',
+    system: 'border-amber-200',
+    tool: 'border-emerald-200',
   };
 
   return (
@@ -60,7 +79,10 @@ export function ChatPanel() {
         )}
 
         {friendlyMessages.map((message) => (
-          <div key={message.id} className="flex flex-col gap-2 rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-100">
+          <div
+            key={message.id}
+            className={`flex flex-col gap-2 rounded-xl border-2 bg-white p-3 shadow-sm ${roleBorders[message.role] || 'border-slate-200'}`}
+          >
             <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
               <span className="rounded bg-slate-900 px-2 py-1 text-white">{message.displayName}</span>
               <span className="rounded bg-slate-100 px-2 py-1 text-slate-700">{message.role}</span>
@@ -70,10 +92,26 @@ export function ChatPanel() {
         ))}
       </div>
 
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
+      <form ref={formRef} onSubmit={onSubmit} className="flex flex-col gap-3">
         <label className="text-sm font-semibold text-slate-700" htmlFor="message">
           Escribe tu consulta
         </label>
+        <div className="flex flex-wrap gap-2">
+          {quickPrompts.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => {
+                setInput(item.prompt);
+                queueMicrotask(() => formRef.current?.requestSubmit());
+              }}
+              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-slate-800"
+              disabled={isLoading}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
         <div className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-inner">
           <textarea
             id="message"
