@@ -34,34 +34,39 @@ export function ChatPanel() {
   };
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <header className="flex items-center justify-between gap-2">
-        <div>
-          <p className="text-sm font-semibold text-indigo-600">Chat</p>
+    <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/90 p-4 shadow-sm backdrop-blur">
+      <header className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">Chat</p>
           <h2 className="text-xl font-bold text-slate-900">Recomendaciones en tiempo real</h2>
           <p className="text-sm text-slate-600">
-            Conecta con OpenRouter a través del backend. Las herramientas se ejecutan de forma segura y los resultados llegan en
-            streaming.
+            IA con streaming + tool calling. Las herramientas viven en el backend y usan Google Books, base de datos y
+            sanitización de entradas.
           </p>
         </div>
-        {isLoading && (
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">Pensando…</span>
-        )}
+        <div className="flex flex-col items-end gap-2 text-xs text-slate-600">
+          <span className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-800">/api/chat</span>
+          {isLoading ? (
+            <span className="rounded-full bg-amber-100 px-3 py-1 font-semibold text-amber-800">Ejecutando tools…</span>
+          ) : (
+            <span className="rounded-full bg-emerald-100 px-3 py-1 font-semibold text-emerald-700">Listo</span>
+          )}
+        </div>
       </header>
 
-      <div ref={scrollRef} className="h-[420px] space-y-3 overflow-y-auto rounded-xl bg-slate-50 p-3">
+      <div ref={scrollRef} className="h-[420px] space-y-3 overflow-y-auto rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-100">
         {friendlyMessages.length === 0 && (
-          <div className="rounded-lg border border-dashed border-slate-200 bg-white p-4 text-sm text-slate-600">
+          <div className="rounded-xl border border-dashed border-slate-200 bg-white p-4 text-sm text-slate-600">
             Pide recomendaciones por género, autor o estado de ánimo. El asistente puede buscar en Google Books, guardar libros,
             marcar como leídos y calcular estadísticas.
           </div>
         )}
 
         {friendlyMessages.map((message) => (
-          <div key={message.id} className="flex flex-col gap-1 rounded-lg bg-white p-3 shadow-sm">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-              <span className="rounded bg-slate-100 px-2 py-1 text-slate-700">{message.displayName}</span>
-              <span className="text-[10px] uppercase tracking-wide text-slate-400">{message.role}</span>
+          <div key={message.id} className="flex flex-col gap-2 rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-100">
+            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              <span className="rounded bg-slate-900 px-2 py-1 text-white">{message.displayName}</span>
+              <span className="rounded bg-slate-100 px-2 py-1 text-slate-700">{message.role}</span>
             </div>
             <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-800">{message.content}</p>
           </div>
@@ -72,7 +77,7 @@ export function ChatPanel() {
         <label className="text-sm font-semibold text-slate-700" htmlFor="message">
           Escribe tu consulta
         </label>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-inner">
           <textarea
             id="message"
             name="message"
@@ -84,28 +89,31 @@ export function ChatPanel() {
               }
               handleInputChange(event);
             }}
-            className="min-h-[80px] flex-1 resize-none rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-800 shadow-inner focus:border-indigo-500 focus:outline-none"
+            className="min-h-[90px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none"
             placeholder="Ej. Recomiéndame novelas de ciencia ficción optimistas y guárdalas con prioridad alta"
             required
             maxLength={800}
           />
-          <div className="flex flex-col gap-2">
-            <button
-              type="submit"
-              className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 disabled:opacity-50"
-              disabled={isLoading}
-            >
-              Enviar
-            </button>
-            {isLoading && (
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+            <span>Se limpia y valida antes de enviar al backend</span>
+            <div className="flex items-center gap-2">
+              {isLoading && (
+                <button
+                  type="button"
+                  onClick={() => stop()}
+                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  Detener
+                </button>
+              )}
               <button
-                type="button"
-                onClick={() => stop()}
-                className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                type="submit"
+                className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 disabled:opacity-50"
+                disabled={isLoading}
               >
-                Detener
+                Enviar
               </button>
-            )}
+            </div>
           </div>
         </div>
       </form>
