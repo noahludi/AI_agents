@@ -1,6 +1,6 @@
 # AI Book Advisor
 
-Prototipo de asistente conversacional para recomendaciones de lectura basado en Next.js 15 (App Router), el AI SDK de Vercel y la API de Google Books. Incluye una ruta de herramientas lista para el tool calling del LLM, validación con Zod y almacenamiento en memoria para listas y estadísticas de lectura.
+Asistente conversacional para recomendaciones de lectura basado en Next.js 15 (App Router), el AI SDK de Vercel, OpenRouter y la API de Google Books. Incluye chat con streaming, tool calling completo en backend, validación con Zod y persistencia en SQLite para listas, historial y estadísticas.
 
 ## Configuración rápida
 1. Crea un archivo `.env.local` con tus credenciales (no se commitea):
@@ -21,18 +21,20 @@ Prototipo de asistente conversacional para recomendaciones de lectura basado en 
    ```
 
 ## Rutas clave
+- `POST /api/chat`: orquesta la conversación con OpenRouter y ejecuta tool calling en streaming.
 - `GET /api/tools/[tool]`: lista de tools disponibles.
 - `POST /api/tools/searchBooks`: busca libros en Google Books (requiere `query`).
 - `POST /api/tools/getBookDetails`: obtiene detalles completos por `bookId`.
 - `POST /api/tools/addToReadingList`: agrega un libro a la lista del usuario (`x-user-id` en headers opcional).
 - `POST /api/tools/getReadingList`: recupera la lista según `filter` y `limit`.
 - `POST /api/tools/markAsRead`: marca como leído con `rating`/`review` opcional.
-- `POST /api/tools/getReadingStats`: genera estadísticas básicas (almacenamiento en memoria).
+- `POST /api/tools/getReadingStats`: genera estadísticas (persistidas en SQLite y filtradas por periodo).
 
-Todas las rutas validan payloads con Zod, sanitizan queries y usan exclusivamente el backend para acceder a Google Books, evitando exponer API keys en el frontend.
+Todas las rutas validan payloads con Zod, sanitizan queries y usan exclusivamente el backend para acceder a Google Books y OpenRouter, evitando exponer API keys en el frontend. Se aplica rate limiting básico en las rutas de chat y tools.
 
-## Pendientes sugeridos
-- Conectar el AI SDK para streaming de respuestas y tool calling.
-- Persistir listas y stats en base de datos real (Prisma/Supabase/etc.).
-- Implementar rate limiting y control de sesiones/usuarios.
-- Añadir UI de chat y visualización de resultados de libros.
+## Funcionalidades clave
+- Chat con streaming usando el AI SDK de Vercel y OpenRouter (tool calling habilitado).
+- Llamadas a Google Books y OpenRouter exclusivamente desde el backend para proteger claves.
+- Lista de lectura, historial y estadísticas persistidas en SQLite (puedes apuntar `DATABASE_URL` a otro motor).
+- Validación y sanitización de inputs con Zod, más rate limiting configurable.
+- UI de chat, panel de lista de lectura y métricas de hábitos.

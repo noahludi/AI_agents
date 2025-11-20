@@ -20,6 +20,7 @@ export interface BookDetails extends BasicBook {
 }
 
 export interface ReadingListEntry {
+  id?: number;
   bookId: string;
   priority: 'high' | 'medium' | 'low';
   notes?: string;
@@ -28,6 +29,9 @@ export interface ReadingListEntry {
   rating?: number;
   review?: string;
   dateFinished?: string;
+  title?: string;
+  authors?: string[];
+  thumbnail?: string;
 }
 
 export interface ReadingStats {
@@ -37,4 +41,5 @@ export interface ReadingStats {
   genres: Record<string, number>;
   authors: Record<string, number>;
   byPeriod: Record<string, number>;
+  streakDays?: number;
 }
