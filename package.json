@@ -12,15 +12,20 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.52",
     "ai": "^3.1.21",
+    "better-sqlite3": "^11.8.1",
+    "nanoid": "^5.1.5",
     "next": "15.0.0-canary.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "19.0.0-rc-f994737d14-20240522",
+    "react-dom": "19.0.0-rc-f994737d14-20240522",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
     "@types/node": "^20.14.12",
-    "@types/react": "^18.3.11",
+    "@types/react": "^19.0.0-rc.1",
+    "@types/react-dom": "^19.0.0-rc.1",
     "eslint": "^8.57.1",
     "eslint-config-next": "15.0.0-canary.0",
     "typescript": "^5.6.3"

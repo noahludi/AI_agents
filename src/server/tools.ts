@@ -27,12 +27,18 @@ export async function getBookDetails(body: unknown) {
 
 export async function addToReadingList(body: unknown, userId: string) {
   const { bookId, priority, notes } = addToReadingListSchema.parse(body);
+  const apiKey = getGoogleBooksKey();
+  const details = await fetchBookDetails(bookId, apiKey);
+
   const added = addBook(userId, {
     bookId,
     priority,
     notes,
     addedAt: new Date().toISOString(),
     status: 'pending',
+    title: details.title,
+    authors: details.authors,
+    thumbnail: details.thumbnail,
   });
   return added;
 }
@@ -45,12 +51,26 @@ export async function getReadingList(body: unknown, userId: string) {
 
 export async function markAsRead(body: unknown, userId: string) {
   const { bookId, rating, review, dateFinished } = markAsReadSchema.parse(body);
-  const updated = markBookAsRead(userId, bookId, rating, review, dateFinished);
+  const apiKey = getGoogleBooksKey();
+  const details = await fetchBookDetails(bookId, apiKey);
+  const updated = markBookAsRead(userId, bookId, rating, review, dateFinished, details);
   return updated ? { success: true } : { success: false, reason: 'Libro no encontrado en la lista' };
 }
 
 export async function getReadingStats(body: unknown, userId: string) {
   const { period, groupBy } = readingStatsSchema.parse(body);
-  const stats = getStats(userId);
-  return { period, groupBy, stats };
+  const stats = getStats(userId, period);
+  const breakdown =
+    groupBy === 'author'
+      ? stats.authors
+      : groupBy === 'year'
+        ? Object.keys(stats.byPeriod).reduce<Record<string, number>>((acc, key) => {
+            if (key === 'unknown') return acc;
+            const year = key.slice(0, 4);
+            acc[year] = (acc[year] || 0) + stats.byPeriod[key];
+            return acc;
+          }, {})
+        : stats.genres;
+
+  return { period, groupBy, stats, breakdown };
 }

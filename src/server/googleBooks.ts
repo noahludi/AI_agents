@@ -20,7 +20,9 @@ export const searchBooks = async (
   const params = new URLSearchParams({ q: safeQuery, maxResults: String(maxResults), orderBy });
   if (apiKey) params.set('key', apiKey);
 
-  const res = await fetch(`${GOOGLE_BOOKS_BASE}/volumes?${params.toString()}`);
+  const res = await fetch(`${GOOGLE_BOOKS_BASE}/volumes?${params.toString()}`, {
+    headers: { 'User-Agent': 'ai-book-advisor/1.0' },
+  });
   if (!res.ok) {
     throw new Error(`Google Books respondió ${res.status}`);
   }
@@ -38,7 +40,9 @@ export const searchBooks = async (
 export const fetchBookDetails = async (bookId: string, apiKey?: string): Promise<BookDetails> => {
   const params = new URLSearchParams();
   if (apiKey) params.set('key', apiKey);
-  const res = await fetch(`${GOOGLE_BOOKS_BASE}/volumes/${encodeURIComponent(bookId)}?${params.toString()}`);
+  const res = await fetch(`${GOOGLE_BOOKS_BASE}/volumes/${encodeURIComponent(bookId)}?${params.toString()}`, {
+    headers: { 'User-Agent': 'ai-book-advisor/1.0' },
+  });
   if (!res.ok) {
     throw new Error(`Google Books respondió ${res.status}`);
   }
